@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AppVotos — MVP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:#120F24;color:#fff;font-family:Inter, system-ui, sans-serif;display:flex;align-items:center;justify-content:center;padding:32px 20px}
+  .wrap{max-width:960px;width:100%;display:flex;flex-direction:column;gap:28px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:44px;height:44px;border-radius:14px;background:#C6FF3D;color:#120F24;display:flex;align-items:center;justify-content:center;font:800 26px 'Bricolage Grotesque', sans-serif}
+  .brand span{font:800 28px 'Bricolage Grotesque', sans-serif}
+  h1{margin:0;font:800 clamp(36px,6vw,64px)/1 'Bricolage Grotesque', sans-serif;letter-spacing:-1.5px}
+  p{margin:0;color:#B9B2D9;font-size:17px;line-height:1.5;max-width:640px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+  a.card{display:flex;flex-direction:column;gap:8px;padding:24px;border-radius:26px;color:#120F24;text-decoration:none;min-height:180px;transition:transform .15s}
+  a.card:hover{transform:translateY(-3px)}
+  a.card b{font:800 28px/1.05 'Bricolage Grotesque', sans-serif}
+  a.card span{font-size:15px;font-weight:500;line-height:1.45}
+  a.card em{margin-top:auto;font-style:normal;font-weight:700;font-size:14px}
+  .note{font-size:13px;color:#8F88B3}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><div class="logo" aria-hidden="true">C</div><span>AppVotos</span></div>
+  <h1>Votación pagada para eventos en vivo</h1>
+  <p>MVP navegable: el público vota desde su celular, cada voto suma al pozo del ganador y el productor administra todo desde un panel.</p>
+  <div class="grid">
+    <a class="card" href="votante.html" style="background:#FF3D8B"><b>Votante</b><span>Ranking en grilla, compra de packs, pago y reparto de votos.</span><em>Abrir →</em></a>
+    <a class="card" href="productor.html" style="background:#C6FF3D"><b>Panel del productor</b><span>Concursantes, reparto del pozo, packs, rondas y registro auditable.</span><em>Abrir →</em></a>
+    <a class="card" href="overlay.html" style="background:#3DD6FF"><b>Overlay</b><span>Pozo y ranking en vivo para la transmisión en YouTube.</span><em>Abrir →</em></a>
+  </div>
+  <span class="note">Datos ficticios · pagos simulados</span>
+</div>
+</body>
+</html>

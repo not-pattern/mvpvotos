@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AppVotos — Votar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#120F24; --card:#1E1840; --line:#2E2660; --muted:#B9B2D9; --soft:#D9D3F2;
+    --pink:#FF3D8B; --lime:#C6FF3D; --yellow:#FFD23D; --white:#FFFFFF;
+    --display:'Bricolage Grotesque', sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#0B0918}
+  body{font-family:Inter, system-ui, sans-serif;color:var(--white);display:flex;justify-content:center}
+  button{font-family:inherit;cursor:pointer}
+  .app{width:100%;max-width:430px;height:100dvh;background:var(--ink);display:flex;flex-direction:column;overflow:hidden}
+  @media (min-width:600px){ body{align-items:center} .app{height:min(900px,96dvh);border-radius:36px;box-shadow:0 0 0 1px var(--line)} }
+  .top{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 14px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:34px;height:34px;border-radius:12px;background:var(--lime);color:var(--ink);display:flex;align-items:center;justify-content:center;font:800 20px var(--display)}
+  .brand span{font:800 21px var(--display);letter-spacing:-.4px}
+  .wallet{border:0;border-radius:999px;background:var(--pink);color:var(--ink);font-weight:700;font-size:14px;padding:10px 14px;min-height:44px;display:flex;align-items:center;gap:6px}
+  .body{flex:1 1 auto;overflow-y:auto;padding:4px 20px 20px;display:flex;flex-direction:column;gap:14px}
+  .stack{display:flex;flex-direction:column;gap:14px}
+  .hero{border-radius:26px;padding:20px;display:flex;flex-direction:column;gap:6px;color:var(--ink)}
+  .hero.pink{background:var(--pink)} .hero.lime{background:var(--lime);gap:4px}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:1.2px}
+  .big{font:800 34px/1 var(--display)}
+  .pot{font:800 46px/1.05 var(--display);letter-spacing:-1px}
+  .pill{border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+  .row{display:flex;align-items:center;gap:8px}
+  .between{display:flex;justify-content:space-between;align-items:baseline}
+  h2{margin:0;font:800 22px var(--display)}
+  h2.xl{font-size:30px;line-height:1.05}
+  .muted{color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .tile{position:relative;aspect-ratio:1/1}
+  .face{position:absolute;inset:0;border-radius:16px;overflow:hidden;color:var(--ink);padding:0;border:3px solid transparent;width:100%}
+  .face.on{border-color:var(--lime)}
+  .initials{position:absolute;inset:0 0 34px 0;display:flex;align-items:center;justify-content:center;font:800 34px var(--display)}
+  .face img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .strip{position:absolute;left:0;right:0;bottom:0;background:var(--ink);color:var(--white);padding:5px 8px 6px;display:flex;flex-direction:column;text-align:left}
+  .strip b{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .strip small{font-size:11px;color:var(--soft)}
+  .rank{position:absolute;top:6px;left:6px;background:var(--ink);color:var(--white);border-radius:999px;padding:3px 8px;font-size:11px;font-weight:700}
+  .count{position:absolute;top:6px;right:6px;min-width:30px;height:30px;padding:0 8px;border-radius:999px;background:var(--lime);color:var(--ink);display:flex;align-items:center;justify-content:center;font:800 16px var(--display);pointer-events:none}
+  .minus{position:absolute;top:0;left:0;width:44px;height:44px;border:0;padding:0;background:transparent;display:flex;align-items:center;justify-content:center}
+  .minus span{width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700}
+  .back{align-self:flex-start;border:0;background:transparent;color:var(--muted);font-size:14px;font-weight:600;padding:10px 0;min-height:44px}
+  .opt{text-align:left;border:3px solid var(--card);background:var(--card);color:var(--white);border-radius:22px;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%}
+  .opt.on{border-color:var(--lime);background:#2A2156}
+  .opt.method{border-radius:18px;padding:14px 16px;min-height:64px;flex-direction:column;align-items:flex-start;gap:2px}
+  .opt.method.on{border-color:var(--pink);background:var(--card)}
+  .tag{background:var(--yellow);color:var(--ink);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700}
+  .card{background:var(--card);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:10px}
+  .hr{height:1px;background:var(--line)}
+  .safe{display:flex;gap:10px;align-items:flex-start;background:#1A2A12;border-radius:16px;padding:12px 14px;font-size:13px;line-height:1.45;color:#E4F5D0}
+  .label{font-size:13px;font-weight:700;letter-spacing:1px;color:var(--muted)}
+  .done{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding-top:30px}
+  .check{width:104px;height:104px;border-radius:50%;background:var(--lime);display:flex;align-items:center;justify-content:center}
+  .foot{padding:12px 20px 26px;background:var(--ink);border-top:1px solid var(--line)}
+  .cta{width:100%;min-height:56px;border:0;border-radius:18px;color:var(--ink);font-size:17px;font-weight:700}
+  .cta:disabled{cursor:not-allowed}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><div class="logo" aria-hidden="true">C</div><span>AppVotos</span></div>
+    <button class="wallet" data-action="packs" aria-label="Mi billetera de votos">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"></rect><path d="M16 12h2"></path><path d="M3 9h18"></path></svg>
+      <span id="balance">0 votos</span>
+    </button>
+  </header>
+  <main class="body" id="screen" aria-live="polite"></main>
+  <footer class="foot"><button class="cta" id="cta"></button></footer>
+</div>
+
+<script>
+/* ============ DATOS DE EJEMPLO (reemplazar por API) ============ */
+const CONTEST = { name: 'TALENTO NOCTURNO · TEMPORADA 3', round: 'Semana 8', venue: 'Club Órbita · Viña del Mar', closes: 'Cierra en 2 d 14 h' };
+const CONTESTANTS = [
+  // photo: URL opcional de la foto del concursante. Si está vacío, se muestran las iniciales.
+  { id: 'mr', name: 'Martina Rojas', initials: 'MR', color: '#FF3D8B', votes: 1240, photo: '' },
+  { id: 'df', name: 'Diego Fuentes', initials: 'DF', color: '#C6FF3D', votes: 1105, photo: '' },
+  { id: 'cs', name: 'Cata Silva',    initials: 'CS', color: '#3DD6FF', votes: 980,  photo: '' },
+  { id: 'ba', name: 'Benja Araya',   initials: 'BA', color: '#FFD23D', votes: 812,  photo: '' },
+  { id: 'jt', name: 'Javi Torres',   initials: 'JT', color: '#FF8A3D', votes: 640,  photo: '' },
+  { id: 'sm', name: 'Sofi Muñoz',    initials: 'SM', color: '#B79CFF', votes: 455,  photo: '' }
+];
+const PACKS = [
+  { id: 'p5',  qty: 5,  price: 1000, tag: '' },
+  { id: 'p20', qty: 20, price: 3500, tag: 'Más popular' },
+  { id: 'p50', qty: 50, price: 8000, tag: 'Mejor precio' }
+];
+const METHODS = [
+  { id: 'card',     title: 'Tarjeta guardada',       sub: 'Pago en 1 clic · Visa terminada en 4417' },
+  { id: 'transfer', title: 'Transferencia bancaria', sub: 'Desde la app de tu banco, sin salir' },
+  { id: 'wallet',   title: 'Billetera digital',      sub: 'Paga con tu saldo de billetera' }
+];
+const POT_SHARE = 0.60; // % de cada voto que va al pozo (lo define el productor)
+
+/* ============ ESTADO ============ */
+const state = {
+  screen: 'home', balance: 0, alloc: {}, pack: 'p20', method: 'card',
+  votes: Object.fromEntries(CONTESTANTS.map(c => [c.id, c.votes])),
+  pot: 1284600, potPerVote: 105, lastSent: 0, lastPot: 0
+};
+
+const money = n => '$' + Math.round(n).toLocaleString('es-CL');
+const num = n => n.toLocaleString('es-CL');
+const allocTotal = () => Object.values(state.alloc).reduce((a, b) => a + b, 0);
+const shortName = n => { const p = n.split(' '); return p[0] + (p[1] ? ' ' + p[1][0] + '.' : ''); };
+const esc = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+function ranked() {
+  return CONTESTANTS.map(c => ({ ...c, v: state.votes[c.id] }))
+    .sort((a, b) => b.v - a.v)
+    .map((c, i) => ({ ...c, rank: i + 1, alloc: state.alloc[c.id] || 0 }));
+}
+
+function faceInner(c) {
+  return (c.photo ? `<img src="${esc(c.photo)}" alt="">` : `<span class="initials">${esc(c.initials)}</span>`) +
+    `<span class="strip"><b>${esc(shortName(c.name))}</b><small>${num(c.v)} votos</small></span>`;
+}
+
+/* ============ PANTALLAS ============ */
+const screens = {
+  home() {
+    const total = Object.values(state.votes).reduce((a, b) => a + b, 0);
+    return `<div class="stack">
+      <div class="hero pink">
+        <span class="eyebrow">${esc(CONTEST.name)}</span>
+        <span class="big">${esc(CONTEST.round)}</span>
+        <span style="font-size:14px;font-weight:500">${esc(CONTEST.venue)}</span>
+        <div class="row" style="margin-top:8px"><span class="pill" style="background:var(--ink);color:#fff">● En vivo</span><span style="font-size:13px;font-weight:600">${esc(CONTEST.closes)}</span></div>
+      </div>
+      <div class="hero lime">
+        <span style="font-size:13px;font-weight:700">Pozo acumulado para el ganador</span>
+        <span class="pot">${money(state.pot)}</span>
+        <span style="font-size:13px;font-weight:500">El ${Math.round(POT_SHARE * 100)}% de cada voto va directo al pozo</span>
+      </div>
+      <div class="between" style="margin-top:4px"><h2>Ranking en vivo</h2><span class="muted" style="font-size:13px">${num(total)} votos</span></div>
+      <div class="grid">${ranked().map(c => `
+        <div class="tile"><div class="face" style="background:${c.color}">${faceInner(c)}</div><span class="rank">#${c.rank}</span></div>`).join('')}
+      </div>
+    </div>`;
+  },
+  packs() {
+    return `<div class="stack">
+      <button class="back" data-action="home">← Volver al concurso</button>
+      <h2 class="xl">Elige tu pack de votos</h2>
+      <p class="muted" style="margin:0;font-size:14px;line-height:1.45">Cargas una vez y repartes tus votos entre quienes quieras durante la temporada.</p>
+      ${PACKS.map(p => `
+        <button class="opt ${state.pack === p.id ? 'on' : ''}" data-action="pick-pack" data-id="${p.id}" aria-pressed="${state.pack === p.id}">
+          <span style="display:flex;flex-direction:column;gap:4px"><span style="font:800 26px var(--display)">${p.qty} votos</span><span class="muted" style="font-size:13px">${money(p.price / p.qty)} por voto</span></span>
+          <span style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><span style="font-weight:700;font-size:20px">${money(p.price)}</span>${p.tag ? `<span class="tag">${p.tag}</span>` : ''}</span>
+        </button>`).join('')}
+      <p class="muted" style="margin:0;font-size:12px;line-height:1.5">Los votos no vencen durante la temporada y no son reembolsables. Ver bases del concurso.</p>
+    </div>`;
+  },
+  pay() {
+    const p = PACKS.find(x => x.id === state.pack);
+    return `<div class="stack">
+      <button class="back" data-action="packs">← Cambiar pack</button>
+      <h2 class="xl">Confirma tu pago</h2>
+      <div class="card">
+        <div class="between"><span class="muted" style="font-size:14px">Pack</span><b>${p.qty} votos</b></div>
+        <div class="between"><span class="muted" style="font-size:14px">Aporte al pozo (${Math.round(POT_SHARE * 100)}%)</span><b style="color:var(--lime)">${money(p.price * POT_SHARE)}</b></div>
+        <div class="hr"></div>
+        <div class="between"><b>Total</b><span style="font:800 26px var(--display)">${money(p.price)}</span></div>
+      </div>
+      <span class="label">MEDIO DE PAGO</span>
+      ${METHODS.map(m => `
+        <button class="opt method ${state.method === m.id ? 'on' : ''}" data-action="pick-method" data-id="${m.id}" aria-pressed="${state.method === m.id}">
+          <span style="font-weight:600;font-size:15px">${m.title}</span><span class="muted" style="font-size:13px">${m.sub}</span>
+        </button>`).join('')}
+      <div class="safe">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C6FF3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:0 0 auto;margin-top:1px"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>
+        <span>El pago lo procesa un proveedor regulado. AppVotos no guarda tu dinero.</span>
+      </div>
+    </div>`;
+  },
+  vote() {
+    return `<div class="stack" style="gap:12px">
+      <div class="hero lime" style="flex-direction:row;justify-content:space-between;align-items:center;padding:16px 18px;border-radius:22px">
+        <div style="display:flex;flex-direction:column"><span style="font-size:13px;font-weight:700">Votos por repartir</span><span style="font:800 40px/1 var(--display)">${state.balance - allocTotal()}</span></div>
+        <span style="font-size:13px;font-weight:600;text-align:right;max-width:150px">Toca un perfil para sumarle un voto</span>
+      </div>
+      <div class="grid">${ranked().map(c => `
+        <div class="tile">
+          <button class="face ${c.alloc ? 'on' : ''}" style="background:${c.color}" data-action="inc" data-id="${c.id}" aria-label="Sumar un voto a ${esc(c.name)}">${faceInner(c)}</button>
+          ${c.alloc ? `<span class="count">+${c.alloc}</span>
+          <button class="minus" data-action="dec" data-id="${c.id}" aria-label="Quitar un voto a ${esc(c.name)}"><span>−</span></button>` : ''}
+        </div>`).join('')}
+      </div>
+    </div>`;
+  },
+  done() {
+    const now = new Date();
+    const stamp = now.toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' }) + ' · ' + now.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+    return `<div class="done">
+      <div class="check"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#120F24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></div>
+      <h2 class="xl" style="font-size:32px">¡Votos registrados!</h2>
+      <p class="muted" style="margin:0;font-size:15px;line-height:1.5">Enviaste ${state.lastSent} votos y sumaste <strong style="color:var(--lime)">${money(state.lastPot)}</strong> al pozo.</p>
+      <div class="card" style="width:100%;text-align:left;gap:8px">
+        <span class="label" style="font-size:12px">COMPROBANTE</span>
+        <span style="font:800 22px var(--display)">#${state.receipt}</span>
+        <span class="muted" style="font-size:13px">${stamp} · ${esc(CONTEST.round)}</span>
+        <span style="font-size:13px;line-height:1.45">Tu voto queda en el registro auditable del concurso. Puedes verificarlo con este código.</span>
+      </div>
+      <div class="hero pink" style="width:100%;flex-direction:row;justify-content:space-between;align-items:center;padding:16px 18px;border-radius:22px">
+        <span style="font-weight:700;font-size:14px">Pozo actual</span><span style="font:800 26px var(--display)">${money(state.pot)}</span>
+      </div>
+    </div>`;
+  }
+};
+
+/* ============ ACCIONES ============ */
+function go(screen) { state.screen = screen; render(); document.getElementById('screen').scrollTop = 0; }
+function receiptId() { const a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s = 'CF-'; for (let i = 0; i < 8; i++) { if (i === 4) s += '-'; s += a[Math.floor(Math.random() * a.length)]; } return s; }
+
+const actions = {
+  home: () => go('home'),
+  packs: () => go('packs'),
+  'pick-pack': id => { state.pack = id; render(); },
+  'pick-method': id => { state.method = id; render(); },
+  inc: id => { if (state.balance - allocTotal() <= 0) return; state.alloc[id] = (state.alloc[id] || 0) + 1; render(); },
+  dec: id => { if (!state.alloc[id]) return; state.alloc[id]--; if (!state.alloc[id]) delete state.alloc[id]; render(); },
+  pay: () => { const p = PACKS.find(x => x.id === state.pack); state.balance += p.qty; state.potPerVote = p.price / p.qty * POT_SHARE; go('vote'); },
+  send: () => {
+    const t = allocTotal(); if (!t) return;
+    for (const [id, n] of Object.entries(state.alloc)) state.votes[id] += n;
+    const add = t * state.potPerVote;
+    Object.assign(state, { alloc: {}, balance: state.balance - t, pot: state.pot + add, lastSent: t, lastPot: add, receipt: receiptId() });
+    go('done');
+  }
+};
+
+function cta() {
+  const p = PACKS.find(x => x.id === state.pack);
+  const t = allocTotal();
+  return {
+    home: state.balance > 0 ? ['Repartir mis ' + state.balance + ' votos', () => go('vote'), 'var(--pink)'] : ['Votar ahora', () => go('packs'), 'var(--pink)'],
+    packs: ['Continuar · ' + money(p.price), () => go('pay'), 'var(--pink)'],
+    pay: ['Pagar ' + money(p.price), actions.pay, 'var(--lime)'],
+    vote: t ? ['Enviar ' + t + (t === 1 ? ' voto' : ' votos'), actions.send, 'var(--pink)'] : ['Asigna al menos 1 voto', null, '#6E668F'],
+    done: ['Volver al concurso', () => go('home'), 'var(--lime)']
+  }[state.screen];
+}
+
+function render() {
+  document.getElementById('screen').innerHTML = screens[state.screen]();
+  document.getElementById('balance').textContent = state.balance + ' votos';
+  const [label, fn, bg] = cta();
+  const b = document.getElementById('cta');
+  b.textContent = label; b.style.background = bg; b.disabled = !fn; b.onclick = fn;
+}
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-action]');
+  if (el && actions[el.dataset.action]) actions[el.dataset.action](el.dataset.id);
+});
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AppVotos — Overlay de transmisión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /*
+    Uso en OBS / Streamlabs: agrega una "Fuente de navegador" con este archivo,
+    tamaño 1920x1080, y añade ?obs=1 al final de la URL para fondo transparente.
+    Sin ?obs=1 se ve un fondo oscuro de demostración.
+  */
+  :root{ --ink:#120F24; --card:#1E1840; --line:#2E2660; --muted:#B9B2D9; --pink:#FF3D8B; --lime:#C6FF3D; --display:'Bricolage Grotesque', sans-serif; }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden}
+  body{background:#0B0918;font-family:Inter, system-ui, sans-serif;color:#fff;display:flex;align-items:center;justify-content:center}
+  body.obs{background:transparent}
+  .stage{width:1280px;height:720px;position:relative;flex:0 0 auto;transform-origin:center center}
+  .placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;color:#4A4370;font-weight:600;letter-spacing:1px;border:1px dashed #2E2660}
+  body.obs .placeholder{display:none}
+  .pot{position:absolute;top:32px;left:32px;background:var(--pink);color:var(--ink);border-radius:26px;padding:16px 22px;display:flex;flex-direction:column;gap:2px}
+  .pot small{font-size:13px;font-weight:700;letter-spacing:1.2px}
+  .pot b{font:800 48px/1 var(--display);letter-spacing:-1px}
+  .rank{position:absolute;top:32px;right:32px;width:360px;background:var(--card);border-radius:26px;padding:18px;display:flex;flex-direction:column;gap:10px}
+  .rank header{display:flex;justify-content:space-between;align-items:center}
+  .rank header b{font:800 22px var(--display)}
+  .badge{background:var(--lime);color:var(--ink);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700}
+  .item{display:flex;align-items:center;gap:10px}
+  .item .n{width:16px;font:800 17px var(--display);color:var(--muted)}
+  .item .av{width:36px;height:36px;border-radius:50%;color:var(--ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:0 0 auto}
+  .item .info{flex:1 1 auto;display:flex;flex-direction:column;gap:5px}
+  .item .top{display:flex;justify-content:space-between;font-size:14px}
+  .item .top span{color:var(--muted);font-size:13px}
+  .track{height:7px;border-radius:999px;background:var(--line)}
+  .fill{height:7px;border-radius:999px;transition:width .6s ease}
+  .qr{position:absolute;left:32px;bottom:32px;background:var(--lime);color:var(--ink);border-radius:26px;padding:16px;display:flex;align-items:center;gap:16px}
+  .qr .code{width:112px;height:112px;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center}
+  .qr b{font:800 30px/1 var(--display)}
+  .last{position:absolute;right:32px;bottom:32px;background:var(--card);border-radius:999px;padding:12px 18px;display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600}
+  .last i{width:10px;height:10px;border-radius:50%;background:var(--pink)}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="placeholder">[ VIDEO DE LA TRANSMISIÓN ]</div>
+
+  <div class="pot"><small>POZO EN VIVO · TALENTO NOCTURNO</small><b id="pot">$1.284.600</b></div>
+
+  <section class="rank" aria-label="Ranking en vivo">
+    <header><b>Ranking en vivo</b><span class="badge">Semana 8</span></header>
+    <div id="list" style="display:flex;flex-direction:column;gap:10px"></div>
+  </section>
+
+  <div class="qr">
+    <div class="code">
+      <!-- Reemplazar por el QR real del concurso -->
+      <svg width="92" height="92" viewBox="0 0 29 29" role="img" aria-label="Código QR de ejemplo">
+        <rect x="0" y="0" width="9" height="9" fill="#120F24"/><rect x="2" y="2" width="5" height="5" fill="#fff"/><rect x="3" y="3" width="3" height="3" fill="#120F24"/>
+        <rect x="20" y="0" width="9" height="9" fill="#120F24"/><rect x="22" y="2" width="5" height="5" fill="#fff"/><rect x="23" y="3" width="3" height="3" fill="#120F24"/>
+        <rect x="0" y="20" width="9" height="9" fill="#120F24"/><rect x="2" y="22" width="5" height="5" fill="#fff"/><rect x="3" y="23" width="3" height="3" fill="#120F24"/>
+        <rect x="11" y="1" width="2" height="2" fill="#120F24"/><rect x="15" y="3" width="3" height="2" fill="#120F24"/><rect x="12" y="6" width="2" height="3" fill="#120F24"/>
+        <rect x="10" y="11" width="3" height="2" fill="#120F24"/><rect x="15" y="10" width="2" height="4" fill="#120F24"/><rect x="19" y="12" width="4" height="2" fill="#120F24"/>
+        <rect x="25" y="11" width="3" height="3" fill="#120F24"/><rect x="1" y="12" width="3" height="2" fill="#120F24"/><rect x="5" y="15" width="3" height="2" fill="#120F24"/>
+        <rect x="11" y="16" width="2" height="3" fill="#120F24"/><rect x="14" y="17" width="4" height="2" fill="#120F24"/><rect x="21" y="16" width="2" height="4" fill="#120F24"/>
+        <rect x="25" y="18" width="3" height="2" fill="#120F24"/><rect x="11" y="22" width="3" height="3" fill="#120F24"/><rect x="16" y="21" width="2" height="2" fill="#120F24"/>
+        <rect x="20" y="23" width="3" height="3" fill="#120F24"/><rect x="25" y="25" width="3" height="3" fill="#120F24"/><rect x="15" y="26" width="3" height="2" fill="#120F24"/>
+      </svg>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;padding-right:10px">
+      <b>Vota desde tu celular</b>
+      <span style="font-size:16px;font-weight:600">Escanea o entra a appvotos.cl/[concurso]</span>
+      <span style="font-size:14px;font-weight:500">El 60% de cada voto va al pozo del ganador</span>
+    </div>
+  </div>
+
+  <div class="last" aria-live="polite"><i></i><span id="last">+20 votos para Cata Silva</span></div>
+</div>
+
+<script>
+if (new URLSearchParams(location.search).get('obs') === '1') document.body.classList.add('obs');
+
+/* Escala el overlay para que llene la ventana (1920x1080 en OBS) */
+function fit() {
+  const s = Math.min(innerWidth / 1280, innerHeight / 720);
+  document.getElementById('stage').style.transform = 'scale(' + s + ')';
+}
+addEventListener('resize', fit); fit();
+
+/* ============ DATOS DE EJEMPLO (reemplazar por API / websocket) ============ */
+const data = [
+  { name: 'Martina Rojas', initials: 'MR', color: '#FF3D8B', v: 1240 },
+  { name: 'Diego Fuentes', initials: 'DF', color: '#C6FF3D', v: 1105 },
+  { name: 'Cata Silva',    initials: 'CS', color: '#3DD6FF', v: 980 },
+  { name: 'Benja Araya',   initials: 'BA', color: '#FFD23D', v: 812 },
+  { name: 'Javi Torres',   initials: 'JT', color: '#FF8A3D', v: 640 },
+  { name: 'Sofi Muñoz',    initials: 'SM', color: '#B79CFF', v: 455 }
+];
+let pot = 1284600;
+const money = n => '$' + Math.round(n).toLocaleString('es-CL');
+
+function render() {
+  const top = [...data].sort((a, b) => b.v - a.v).slice(0, 5);
+  const max = top[0].v;
+  document.getElementById('list').innerHTML = top.map((c, i) => `
+    <div class="item"><span class="n">${i + 1}</span><div class="av" style="background:${c.color}">${c.initials}</div>
+      <div class="info"><div class="top"><b style="font-weight:600">${c.name}</b><span>${c.v.toLocaleString('es-CL')}</span></div>
+      <div class="track"><div class="fill" style="width:${Math.round(c.v / max * 100)}%;background:${c.color}"></div></div></div></div>`).join('');
+  document.getElementById('pot').textContent = money(pot);
+}
+
+/* Simulación de votos entrando en vivo (solo demo) */
+setInterval(() => {
+  const c = data[Math.floor(Math.random() * data.length)];
+  const n = [1, 5, 5, 20][Math.floor(Math.random() * 4)];
+  c.v += n; pot += n * 105;
+  document.getElementById('last').textContent = '+' + n + (n === 1 ? ' voto' : ' votos') + ' para ' + c.name;
+  render();
+}, 3000);
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AppVotos — Panel del productor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#120F24; --text:#1A1530; --muted:#5E5780; --bg:#F5F2FF; --line:#EEEAF8;
+    --pink:#FF3D8B; --lime:#C6FF3D; --cyan:#3DD6FF; --yellow:#FFD23D; --lilac:#B79CFF; --violet:#5B2EE6;
+    --display:'Bricolage Grotesque', sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:Inter, system-ui, sans-serif}
+  a{color:var(--violet)} a:hover{color:#3F1BB0}
+  button{font-family:inherit;cursor:pointer}
+  .layout{min-height:100vh;display:flex;flex-wrap:wrap}
+  nav{flex:1 1 220px;background:var(--ink);color:#fff;padding:24px 16px;display:flex;flex-direction:column;gap:6px}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 8px 20px}
+  .logo{width:34px;height:34px;border-radius:12px;background:var(--lime);color:var(--ink);display:flex;align-items:center;justify-content:center;font:800 20px var(--display)}
+  .brand span{font:800 21px var(--display)}
+  nav a{color:#D9D3F2;border-radius:14px;padding:12px 14px;font-weight:500;text-decoration:none;font-size:15px}
+  nav a:hover{background:#1E1840;color:#fff}
+  nav a.active{background:var(--lime);color:var(--ink);font-weight:700}
+  .account{margin-top:auto;padding:16px 8px 0;border-top:1px solid #2E2660;display:flex;align-items:center;gap:10px}
+  .avatar{width:36px;height:36px;border-radius:50%;background:var(--pink);color:var(--ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:0 0 auto}
+  main{flex:999 1 560px;min-width:0;padding:32px 36px 48px;display:flex;flex-direction:column;gap:24px}
+  @media (max-width:700px){ main{padding:24px 16px 40px} nav{flex-basis:100%} }
+  h1{margin:0;font:800 40px/1.05 var(--display);letter-spacing:-.8px}
+  h2{margin:0;font:800 22px var(--display)}
+  .head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .chip{border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;color:var(--ink)}
+  .btn{min-height:48px;padding:0 18px;border-radius:16px;font-weight:700;font-size:15px;display:inline-flex;align-items:center;text-decoration:none;border:0}
+  .btn.outline{border:2px solid var(--text);background:#fff;color:var(--text)}
+  .btn.violet{background:var(--violet);color:#fff}
+  .btn.lime{background:var(--lime);color:var(--ink);min-height:44px;font-size:14px}
+  .btn.sm{min-height:40px;padding:0 12px;font-size:13px;background:var(--bg);color:var(--text);font-weight:600;border-radius:12px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
+  .kpi{background:#fff;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:6px}
+  .kpi.pink{background:var(--pink);color:var(--ink)}
+  .kpi .l{font-size:13px;font-weight:600;color:var(--muted)} .kpi.pink .l{color:var(--ink);font-weight:700}
+  .kpi .v{font:800 34px/1 var(--display)}
+  .kpi .s{font-size:13px;color:var(--muted)} .kpi.pink .s{color:var(--ink);font-weight:500}
+  .cols{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+  .card{background:#fff;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:14px}
+  .card.dark{background:var(--ink);color:#fff}
+  .scroll{overflow-x:auto}
+  table{width:100%;min-width:520px;border-collapse:collapse;font-size:14px}
+  th{padding:10px 8px;text-align:left;color:var(--muted);font-size:12px;letter-spacing:.6px}
+  td{padding:10px 8px;border-top:1px solid var(--line)}
+  .num{text-align:right}
+  .who{display:flex;align-items:center;gap:12px}
+  .who .avatar{width:40px;height:40px;font-size:14px}
+  .who small{display:block;font-size:12px;color:var(--muted)}
+  .status{border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+  .st-ok{background:#E9FFC2;color:#2F4A00} .st-risk{background:#FFE0EC;color:#8A0F3F} .st-out{background:var(--line);color:var(--muted)}
+  .icon-btn{width:40px;height:40px;border-radius:12px;border:0;background:var(--bg);color:var(--text)}
+  .split{display:flex;height:18px;border-radius:999px;overflow:hidden}
+  .legend{display:flex;flex-direction:column;gap:8px;font-size:14px}
+  .legend div{display:flex;justify-content:space-between}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px}
+  input[type=range]{width:100%;accent-color:var(--pink);min-height:32px}
+  .pack{display:flex;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:14px;font-size:14px}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav aria-label="Menú principal">
+    <div class="brand"><div class="logo" aria-hidden="true">C</div><span>AppVotos</span></div>
+    <a href="#" class="active" aria-current="page">Concursos</a>
+    <a href="#concursantes">Concursantes</a>
+    <a href="#rondas">Rondas y votación</a>
+    <a href="#pozo">Pozo y pagos</a>
+    <a href="#bases">Bases del concurso</a>
+    <a href="overlay.html">Overlay de transmisión</a>
+    <div class="account"><div class="avatar">CO</div><div><div style="font-weight:600;font-size:14px">Club Órbita</div><div style="font-size:12px;color:#B9B2D9">Productor</div></div></div>
+  </nav>
+
+  <main>
+    <div class="head">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:13px;color:var(--muted)">Concursos / Talento Nocturno T3</span>
+        <h1>Talento Nocturno · Temporada 3</h1>
+        <div class="chips"><span class="chip" style="background:var(--lime)">● Ronda abierta · Semana 8</span><span class="chip" style="background:#fff;color:var(--muted);font-weight:600">Datos de ejemplo</span></div>
+      </div>
+      <div class="chips">
+        <a class="btn outline" href="votante.html">Ver página de votación</a>
+        <a class="btn violet" href="overlay.html">Abrir overlay</a>
+      </div>
+    </div>
+
+    <section id="pozo" class="kpis" aria-label="Resumen">
+      <div class="kpi pink"><span class="l">Pozo para el ganador</span><span class="v" id="kPot">$1.284.600</span><span class="s" id="kPotS">60% de lo recaudado</span></div>
+      <div class="kpi"><span class="l">Recaudado total</span><span class="v">$2.141.000</span><span class="s">8 semanas · 1.018 votantes únicos</span></div>
+      <div class="kpi"><span class="l">Ingreso discoteca</span><span class="v" id="kClub">$599.480</span><span class="s" id="kClubS">28% de lo recaudado</span></div>
+      <div class="kpi"><span class="l">Votos esta ronda</span><span class="v">5.232</span><span class="s">0 alertas antifraude</span></div>
+    </section>
+
+    <div class="cols">
+      <section id="concursantes" class="card" style="flex:2 1 520px;min-width:0">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px">
+          <h2 style="font-size:24px">Concursantes</h2>
+          <button class="btn lime">+ Agregar concursante</button>
+        </div>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>CONCURSANTE</th><th>ESTADO</th><th class="num">VOTOS RONDA</th><th class="num">TOTAL</th><th><span class="sr">Acciones</span></th></tr></thead>
+            <tbody id="people"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div style="flex:1 1 340px;min-width:0;display:flex;flex-direction:column;gap:20px">
+        <section class="card">
+          <h2>Reparto de cada voto</h2>
+          <div class="split" aria-hidden="true"><div id="barPot" style="background:var(--pink)"></div><div id="barClub" style="background:var(--cyan)"></div><div style="width:12%;background:var(--ink)"></div></div>
+          <div class="legend">
+            <div><span><span class="dot" style="background:var(--pink)"></span>Pozo del ganador</span><strong id="lPot">60%</strong></div>
+            <div><span><span class="dot" style="background:var(--cyan)"></span>Discoteca</span><strong id="lClub">28%</strong></div>
+            <div><span><span class="dot" style="background:var(--ink)"></span>AppVotos (fijo)</span><strong>12%</strong></div>
+          </div>
+          <label for="pozoRange" style="font-size:13px;font-weight:600;color:var(--muted)">Porcentaje al pozo</label>
+          <input id="pozoRange" type="range" min="40" max="80" step="5" value="60">
+          <p style="margin:0;font-size:13px;color:var(--muted);line-height:1.5">Por cada $1.000: <span id="ex"></span>. El reparto se fija al publicar las bases y no cambia durante la temporada.</p>
+        </section>
+
+        <section class="card" style="gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><h2>Packs de votos</h2><button class="btn sm">Editar</button></div>
+          <div class="pack"><span>5 votos</span><strong>$1.000</strong></div>
+          <div class="pack"><span>20 votos · Más popular</span><strong>$3.500</strong></div>
+          <div class="pack"><span>50 votos · Mejor precio</span><strong>$8.000</strong></div>
+        </section>
+
+        <section id="rondas" class="card dark" style="gap:12px">
+          <h2>Ronda semana 8</h2>
+          <span style="font-size:14px;color:#D9D3F2">Abierta · cierra dom 15 nov, 23:59</span>
+          <span style="font-size:12px;font-weight:700;letter-spacing:1px;color:#B9B2D9;margin-top:4px">PESO EN LA ELIMINACIÓN</span>
+          <div class="chips">
+            <span class="chip" style="background:var(--pink)">Voto online 40%</span>
+            <span class="chip" style="background:var(--cyan)">Voto en la entrada 20%</span>
+            <span class="chip" style="background:var(--yellow)">Aplausos por show 25%</span>
+            <span class="chip" style="background:var(--lilac)">Voto concursantes 15%</span>
+          </div>
+          <div class="chips" style="margin-top:6px">
+            <button class="btn lime">Cerrar ronda</button>
+            <button class="btn" style="min-height:44px;font-size:14px;border:2px solid #fff;background:transparent;color:#fff">Cargar votos presenciales</button>
+          </div>
+        </section>
+
+        <section id="bases" class="card" style="gap:10px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5B2EE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>
+            <h2>Registro auditable</h2>
+          </div>
+          <p style="margin:0;font-size:14px;line-height:1.5;color:#3D3660">Cada voto queda con comprobante, marca de tiempo y origen del pago. El registro se puede exportar para auditoría y los votantes pueden verificar su comprobante.</p>
+          <button class="btn outline" style="align-self:flex-start;min-height:44px;font-size:14px">Descargar registro (CSV)</button>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ============ DATOS DE EJEMPLO (reemplazar por API) ============ */
+const RAISED = 2141000;          // total recaudado en la temporada
+const PLATFORM_FEE = 12;         // % fijo de AppVotos
+const PEOPLE = [
+  { name: 'Martina Rojas', initials: 'MR', color: '#FF3D8B', act: 'Baile urbano', status: 'ok',   label: 'En competencia', round: '1.240', total: '9.812' },
+  { name: 'Diego Fuentes', initials: 'DF', color: '#C6FF3D', act: 'Canto',        status: 'ok',   label: 'En competencia', round: '1.105', total: '8.904' },
+  { name: 'Cata Silva',    initials: 'CS', color: '#3DD6FF', act: 'Freestyle',    status: 'ok',   label: 'En competencia', round: '980',   total: '8.311' },
+  { name: 'Benja Araya',   initials: 'BA', color: '#FFD23D', act: 'DJ set',       status: 'ok',   label: 'En competencia', round: '812',   total: '7.020' },
+  { name: 'Javi Torres',   initials: 'JT', color: '#FF8A3D', act: 'Stand-up',     status: 'risk', label: 'En riesgo',      round: '640',   total: '5.877' },
+  { name: 'Sofi Muñoz',    initials: 'SM', color: '#B79CFF', act: 'Canto',        status: 'risk', label: 'En riesgo',      round: '455',   total: '5.102' },
+  { name: 'Nico Pérez',    initials: 'NP', color: '#D8D3E8', act: 'Baile',        status: 'out',  label: 'Eliminado S7',   round: '—',     total: '3.940' },
+  { name: 'Fran León',     initials: 'FL', color: '#D8D3E8', act: 'Magia',        status: 'out',  label: 'Eliminada S6',   round: '—',     total: '2.615' }
+];
+
+const money = n => '$' + Math.round(n).toLocaleString('es-CL');
+
+document.getElementById('people').innerHTML = PEOPLE.map(p => `
+  <tr>
+    <td><div class="who"><div class="avatar" style="background:${p.color}">${p.initials}</div><div><span style="font-weight:600">${p.name}</span><small>${p.act}</small></div></div></td>
+    <td><span class="status st-${p.status}">${p.label}</span></td>
+    <td class="num" style="font-weight:600">${p.round}</td>
+    <td class="num" style="color:var(--muted)">${p.total}</td>
+    <td class="num"><button class="icon-btn" aria-label="Editar ${p.name}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"></path></svg></button></td>
+  </tr>`).join('');
+
+const range = document.getElementById('pozoRange');
+function update() {
+  const pozo = Number(range.value);
+  const club = 100 - PLATFORM_FEE - pozo;
+  document.getElementById('barPot').style.width = pozo + '%';
+  document.getElementById('barClub').style.width = club + '%';
+  document.getElementById('lPot').textContent = pozo + '%';
+  document.getElementById('lClub').textContent = club + '%';
+  document.getElementById('kPot').textContent = money(RAISED * pozo / 100);
+  document.getElementById('kPotS').textContent = pozo + '% de lo recaudado';
+  document.getElementById('kClub').textContent = money(RAISED * club / 100);
+  document.getElementById('kClubS').textContent = club + '% de lo recaudado';
+  document.getElementById('ex').textContent = money(10 * pozo) + ' al pozo · ' + money(10 * club) + ' a la discoteca · ' + money(10 * PLATFORM_FEE) + ' a AppVotos';
+}
+range.addEventListener('input', update);
+update();
+</script>
+</body>
+</html>
